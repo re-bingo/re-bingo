@@ -1,3 +1,4 @@
+migrations
 config
 poetry.lock
 */__pycache__

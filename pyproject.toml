@@ -16,8 +16,16 @@ uvicorn = "^0.20.0"
 aiomysql = "^0.1.1"
 loguru = "^0.6.0"
 pyyaml = "^6.0"
+watchfiles = "^0.18.1"
 
+[tool.poetry.group.dev.dependencies]
+aerich = "^0.7.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.aerich]
+tortoise_orm = "src.db.SQL_CONFIG"
+location = "./migrations"
+src_folder = "."
