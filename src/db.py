@@ -37,6 +37,7 @@ async def connect():
         command = Command(tortoise_config=SQL_CONFIG)
         await command.init()
         await command.migrate()
+        await command.upgrade()
         logger.info("aerich migrated schemas")
 
 

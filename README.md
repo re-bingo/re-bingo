@@ -18,5 +18,5 @@ Then, execute the command below:
 
 ```shell
 poetry install
-poetry run uvicorn src:app --reload
+poetry run uvicorn src:app --reload --reload-exclude="migrations/**/*.py"
 ```

@@ -17,6 +17,7 @@ aiomysql = "^0.1.1"
 loguru = "^0.6.0"
 pyyaml = "^6.0"
 watchfiles = "^0.18.1"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 [tool.poetry.group.dev.dependencies]
 aerich = "^0.7.1"
