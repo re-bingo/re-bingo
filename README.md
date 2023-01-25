@@ -14,6 +14,12 @@ First, add a `sql.yaml` file under the `/config` folder, containing a db url lik
 default: mysql://user:password@host:port/db
 ```
 
+and generate a `salt` file under the `/config` folder:
+
+```shell
+openssl rand 1024 > salt
+```
+
 Then, execute the command below:
 
 ```shell
