@@ -3,10 +3,11 @@ from tortoise import Model, fields, exceptions
 from contextlib import suppress
 from passlib.hash import pbkdf2_sha256
 from hashlib import md5
-from src.common import datetime, timestamp, salt
+from src.common import datetime, salt
 from time import time
 from pydantic import BaseModel
 import orjson
+from src.common.patch import auto_get_item_fields
 
 
 class Token(BaseModel):
@@ -31,6 +32,7 @@ class UserItem(Model):
         return f"<UserItem: {self.id} {self.username!r}>"
 
 
+@auto_get_item_fields
 @strawberry.type
 class User:
     id: int
@@ -39,12 +41,6 @@ class User:
     registered_at: datetime
     last_modified: datetime
     last_login_at: datetime
-
-    def __init__(self, item: UserItem):
-        self.item = item
-
-    def __getattr__(self, field: str):
-        return getattr(self.item, field)
 
 
 def generate_token(user: UserItem | User):

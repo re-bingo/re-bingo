@@ -5,6 +5,7 @@ from strawberry.types import Info
 from tortoise import Model, fields, exceptions
 from contextlib import suppress
 from src.models.user import UserItem, User, Token
+from src.common.patch import auto_get_item_fields
 
 
 class QuestionnaireItem(Model):
@@ -17,18 +18,13 @@ class QuestionnaireItem(Model):
         table = "questionnaires"
 
 
+@auto_get_item_fields
 @strawberry.type
 class Questionnaire:
     id: int
     creator: User
     title: str
     description: str
-
-    def __init__(self, item: QuestionnaireItem):
-        self.item = item
-
-    def __getattr__(self, field):
-        return getattr(self.item, field)
 
 
 async def get_questionnaire(questionnaire_id: int) -> Questionnaire | None:
