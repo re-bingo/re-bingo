@@ -60,14 +60,12 @@ def parse_token(token: str):
             return Token(**orjson.loads(payload))
 
 
-@strawberry.field
 async def get_user(user_id: int) -> User | None:
     with suppress(exceptions.DoesNotExist):
         item = await UserItem.get(id=user_id)
         return User(item)
 
 
-@strawberry.mutation
 async def add_user(username: str, password: str, avatar: str | None = None) -> User | None:
     with suppress(exceptions.IntegrityError):
         item = await UserItem.create(username=username, password=pbkdf2_sha256.hash(password), avatar=avatar)

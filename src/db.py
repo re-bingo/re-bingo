@@ -1,4 +1,5 @@
 from tortoise import Tortoise
+from tortoise.exceptions import OperationalError
 from loguru import logger
 
 
@@ -19,7 +20,7 @@ def load_sql_config():
 
 SQL_CONFIG = dict(
     connections=load_sql_config(), use_tz=True, timezone="UTC",
-    apps={"models": {"models": ["src.models.user", "aerich.models"], "default_connection": "default"}}
+    apps={"models": {"models": ["src.models", "aerich.models"], "default_connection": "default"}}
 )
 
 
@@ -44,3 +45,14 @@ async def connect():
 async def close():
     await Tortoise.close_connections()
     logger.success("tortoise connections closed")
+
+
+async def retry_when_lose_sql_connection(request, call_next):
+    try:
+        return await call_next(request)
+    except OperationalError as err:
+        if "Lost connection to MySQL server during query" in str(err.args):
+            logger.error(err)
+            return await call_next(request)
+        else:
+            raise err from err
