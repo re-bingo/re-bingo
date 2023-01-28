@@ -1,21 +1,15 @@
 # TODO: implement questions and choices, logic and paging, posting and attending
 
+from contextlib import suppress
+
 import strawberry
 from strawberry.types import Info
-from tortoise import Model, fields, exceptions
-from contextlib import suppress
-from src.models.user import UserItem, User, Token
+from tortoise import exceptions
+
 from src.common.patch import auto_get_item_fields
-
-
-class QuestionnaireItem(Model):
-    id: int = fields.IntField(pk=True)
-    creator: UserItem = fields.ForeignKeyField("models.UserItem")
-    title: str = fields.CharField(max_length=63)
-    description: str = fields.TextField()
-
-    class Meta:
-        table = "questionnaires"
+from src.models import QuestionItem, QuestionnaireItem
+from src.types.question import Question
+from src.types.user import Token, User
 
 
 @auto_get_item_fields
@@ -25,6 +19,11 @@ class Questionnaire:
     creator: User
     title: str
     description: str
+
+    @strawberry.field
+    async def questions(self) -> list[Question]:
+        results = await QuestionItem.filter(questionnaire_id=self.id).all()
+        return list(map(Question, results))
 
 
 async def get_questionnaire(questionnaire_id: int) -> Questionnaire | None:

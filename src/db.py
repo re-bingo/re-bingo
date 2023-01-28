@@ -1,6 +1,6 @@
+from loguru import logger
 from tortoise import Tortoise
 from tortoise.exceptions import OperationalError
-from loguru import logger
 
 
 def load_sql_config():
@@ -8,7 +8,7 @@ def load_sql_config():
 
     config_path = Path("./config/") / "sql.yaml"
     if config_path.is_file():
-        from yaml import load, CLoader
+        from yaml import CLoader, load
         with open("./config/sql.yaml") as f:
             db_url = load(f, CLoader)
             logger.info(f"{db_url = }")
@@ -34,12 +34,22 @@ async def connect():
             return logger.info("tortoise generated schemas")
         except OperationalError as err:
             logger.warning(repr(err.args[0]))
-        from aerich import Command
+        from aerich import Command, exceptions
         command = Command(tortoise_config=SQL_CONFIG)
-        await command.init()
-        await command.migrate()
-        await command.upgrade()
-        logger.info("aerich migrated schemas")
+        try:
+            await command.init()
+            try:
+                result = await command.upgrade()
+            except OperationalError:
+                logger.debug("no need to upgrade")
+            else:
+                logger.success(f"aerich upgraded {result}")
+            finally:
+                await command.migrate()
+                logger.info("aerich migrated schemas")
+        except (AttributeError, exceptions.NotSupportError) as err:
+            from traceback import format_exception_only
+            logger.error(format_exception_only(err)[0])
 
 
 async def close():
@@ -55,4 +65,4 @@ async def retry_when_lose_sql_connection(request, call_next):
             logger.error(err)
             return await call_next(request)
         else:
-            raise err from err
+            raise err

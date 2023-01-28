@@ -1,35 +1,21 @@
-import strawberry
-from tortoise import Model, fields, exceptions
 from contextlib import suppress
-from passlib.hash import pbkdf2_sha256
 from hashlib import md5
-from src.common import datetime, salt
 from time import time
-from pydantic import BaseModel
+
 import orjson
+import strawberry
+from passlib.hash import pbkdf2_sha256
+from pydantic import BaseModel
+from tortoise import exceptions
+
+from src.common import datetime, salt
 from src.common.patch import auto_get_item_fields
+from src.models.users import UserItem
 
 
 class Token(BaseModel):
     id: int
     time: float
-
-
-class UserItem(Model):
-    id: int = fields.IntField(pk=True)
-    username: str | None = fields.CharField(15, null=True, unique=True, index=True)
-    password: str | None = fields.CharField(87)
-    avatar: str | None = fields.TextField(null=True)
-    registered_at: datetime = fields.DatetimeField(auto_now_add=True)
-    last_modified: datetime = fields.DatetimeField(auto_now=True)
-    last_login_at: datetime = fields.DatetimeField(auto_now_add=True)
-
-    class Meta:
-        table = "users"
-        data_fields = ["id", "username", "avatar"]
-
-    def __str__(self):
-        return f"<UserItem: {self.id} {self.username!r}>"
 
 
 @auto_get_item_fields
