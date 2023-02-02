@@ -34,7 +34,7 @@ def generate_token(user: UserItem | User):
     return f"{payload.decode()} {md5(payload + salt).hexdigest()}"
 
 
-def parse_token(token: str):
+def parse_token(token: str) -> Token | None:
     if token:
         payload, signature = token.split(" ")
         payload = payload.encode()

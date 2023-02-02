@@ -12,11 +12,11 @@ from src.models import UserItem
 from src.types import Token, generate_token, parse_token
 
 
-def find_token(r: Request) -> Token:
+def find_token(r: Request) -> Token | None:
     return parse_token(r.headers.get("Authorization") or r.cookies.get("token") or r.query_params.get("token"))
 
 
-def get_context(token: Token = Depends(find_token)):
+def get_context(token: Token | None = Depends(find_token)):
     return {"token": token}
 
 
@@ -48,5 +48,5 @@ async def login(data: LoginInput):
 
 
 @router.post("/login/form", responses={404: {}}, response_model=str)
-async def web_login(username: str | None = Form(), password: str | None = Form()):
+async def web_login(username: str = Form(), password: str = Form()):
     return await login(LoginInput(username=username, password=password))
