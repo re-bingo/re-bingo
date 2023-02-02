@@ -18,6 +18,7 @@ loguru = "^0.6.0"
 pyyaml = "^6.0"
 watchfiles = "^0.18.1"
 passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+python-multipart = "^0.0.5"
 
 [tool.poetry.group.dev.dependencies]
 aerich = "^0.7.1"

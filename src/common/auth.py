@@ -1,6 +1,6 @@
 from contextlib import suppress
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Form, Request
 from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
@@ -35,13 +35,18 @@ async def get_token(data: LoginInput) -> str | None:
             return generate_token(item)
 
 
-@router.post("/login", responses={404: {}})
+@router.post("/login", responses={404: {}}, response_model=str)
 async def login(data: LoginInput):
     if token := await get_token(data):
         response = PlainTextResponse(token, background=BackgroundTask(
-            lambda: UserItem.filter(id=Token(token).id).update(last_login_at=timestamp())
+            lambda: UserItem.filter(id=parse_token(token).id).update(last_login_at=timestamp())
         ))
         response.set_cookie("token", token)
     else:
         response = Response(status_code=404)
     return response
+
+
+@router.post("/login/form", responses={404: {}}, response_model=str)
+async def web_login(username: str | None = Form(), password: str | None = Form()):
+    return await login(LoginInput(username=username, password=password))
