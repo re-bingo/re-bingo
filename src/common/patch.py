@@ -14,14 +14,3 @@ def auto_get_item_fields(cls: type):
     cls.__getattr__ = __getattr__
 
     return cls
-
-
-async def promise(value):
-    """
-    to avoid `object Question can't be used in 'await' expression` in graphql/execution/execute.py:await_completed
-
-    an object
-
-
-    """
-    return value

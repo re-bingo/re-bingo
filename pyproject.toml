@@ -19,6 +19,7 @@ pyyaml = "^6.0"
 watchfiles = "^0.18.1"
 passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 python-multipart = "^0.0.5"
+httpx = {extras = ["http2"], version = "^0.23.3"}
 
 [tool.poetry.group.dev.dependencies]
 aerich = "^0.7.1"

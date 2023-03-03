@@ -20,6 +20,12 @@ and generate a `salt` file under the `/config` folder:
 openssl rand 1024 > salt
 ```
 
+and add a `env.yaml` file under the `/config` folder, containing a *poster* url like this:
+
+```yaml
+poster: http://localhost:5000
+```
+
 Then, execute the command below:
 
 ```shell

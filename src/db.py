@@ -4,12 +4,12 @@ from tortoise.exceptions import OperationalError
 
 
 def load_sql_config():
-    from pathlib import Path
+    from src.common import config_root
 
-    config_path = Path("./config/") / "sql.yaml"
-    if config_path.is_file():
+    config = config_root / "sql.yaml"
+    if config.is_file():
         from yaml import CLoader, load
-        with open("./config/sql.yaml") as f:
+        with config.open() as f:
             db_url = load(f, CLoader)
             logger.info(f"{db_url = }")
             return db_url
