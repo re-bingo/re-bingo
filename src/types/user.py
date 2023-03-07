@@ -27,6 +27,11 @@ class EduBackground:
     school: str | None = strawberry.field(lambda self: self.get("school"))
 
 
+@strawberry.input
+class EduBackgroundIn:
+    school: str | None
+
+
 @auto_get_item_fields
 @strawberry.type
 class User:
@@ -71,3 +76,20 @@ async def add_user(username: str, password: str, email: str, avatar: str | None 
             username=username, password=pbkdf2_sha256.hash(password), email=email, avatar=avatar
         )
         return User(item)
+
+
+async def update_user(info: Info, username: str | None = None, email: str | None = None, avatar: str | None = None,
+                      birthday: date | None = None, edu_background: EduBackgroundIn = None) -> User:
+    item = await UserItem.get(id=info.context["token"].id)
+    if username:
+        item.username = username
+    if email:
+        item.email = email
+    if avatar:
+        item.avatar = avatar
+    if birthday:
+        item.birthday = birthday
+    if edu_background:
+        item.edu_background.update(edu_background.__dict__)
+    await item.save()
+    return User(item)

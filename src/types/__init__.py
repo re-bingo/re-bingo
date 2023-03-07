@@ -23,6 +23,7 @@ class Mutation:
     add_user = strawberry.mutation(add_user)
     add_questionnaire = strawberry.mutation(add_questionnaire)
     add_question = strawberry.mutation(add_question)
+    update_user = strawberry.mutation(update_user)
 
 
 schema = strawberry.Schema(Query, Mutation)
