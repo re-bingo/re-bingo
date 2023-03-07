@@ -5,16 +5,15 @@ from time import time
 
 import orjson
 import strawberry
+from graphql import OperationType
 from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel
+from strawberry.types import Info
 from tortoise import exceptions
 
 from src.common import salt
 from src.common.patch import auto_get_item_fields
 from src.models.users import UserItem
-
-from strawberry.types import Info
-from graphql import OperationType
 
 
 class Token(BaseModel):
@@ -57,7 +56,7 @@ def generate_token(user: UserItem | User):
 
 
 def parse_token(token: str) -> Token | None:
-    if token:
+    with suppress(ValueError, AttributeError):
         payload, signature = token.split(" ")
         payload = payload.encode()
         if md5(payload + salt).hexdigest() == signature:
@@ -79,7 +78,7 @@ async def add_user(username: str, password: str, email: str, avatar: str | None 
 
 
 async def update_user(info: Info, username: str | None = None, email: str | None = None, avatar: str | None = None,
-                      birthday: date | None = None, edu_background: EduBackgroundIn = None) -> User:
+                      birthday: date | None = None, edu_background: EduBackgroundIn | None = None) -> User:
     item = await UserItem.get(id=info.context["token"].id)
     if username:
         item.username = username

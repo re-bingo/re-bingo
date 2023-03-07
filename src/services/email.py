@@ -1,10 +1,9 @@
+from hashlib import md5
 from random import randrange
 
 from fastapi import APIRouter
 from httpx import AsyncClient
 from yaml import CLoader, load
-
-from hashlib import md5
 
 from ..common import config_root
 
