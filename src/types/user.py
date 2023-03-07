@@ -1,4 +1,5 @@
 from contextlib import suppress
+from datetime import date, datetime
 from hashlib import md5
 from time import time
 
@@ -8,9 +9,12 @@ from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel
 from tortoise import exceptions
 
-from src.common import datetime, salt
+from src.common import salt
 from src.common.patch import auto_get_item_fields
 from src.models.users import UserItem
+
+from strawberry.types import Info
+from graphql import OperationType
 
 
 class Token(BaseModel):
@@ -18,15 +22,28 @@ class Token(BaseModel):
     time: float
 
 
+@strawberry.type
+class EduBackground:
+    school: str | None = strawberry.field(lambda self: self.get("school"))
+
+
 @auto_get_item_fields
 @strawberry.type
 class User:
     id: int
     username: str | None
+    email: str | None
     avatar: str | None
+    birthday: str | None
+    edu_background: EduBackground | None
     registered_at: datetime
     last_modified: datetime
     last_login_at: datetime
+
+    @strawberry.field
+    def token(self, info: Info) -> str | None:
+        if info.operation.operation is OperationType.MUTATION:
+            return generate_token(self)
 
 
 def generate_token(user: UserItem | User):
@@ -48,7 +65,9 @@ async def get_user(user_id: int) -> User | None:
         return User(item)
 
 
-async def add_user(username: str, password: str, avatar: str | None = None) -> User | None:
+async def add_user(username: str, password: str, email: str, avatar: str | None = None) -> User | None:
     with suppress(exceptions.IntegrityError):
-        item = await UserItem.create(username=username, password=pbkdf2_sha256.hash(password), avatar=avatar)
+        item = await UserItem.create(
+            username=username, password=pbkdf2_sha256.hash(password), email=email, avatar=avatar
+        )
         return User(item)
