@@ -13,7 +13,9 @@ from tortoise import exceptions
 
 from src.common import salt
 from src.common.patch import auto_get_item_fields
+from src.models.tags import TagItem
 from src.models.users import UserItem
+from src.types.tag import Tag
 
 
 class Token(BaseModel):
@@ -43,6 +45,11 @@ class User:
     registered_at: datetime
     last_modified: datetime
     last_login_at: datetime
+
+    @strawberry.field
+    async def tags(self) -> list[Tag]:
+        items = await TagItem.filter(user_id=self.id).all()
+        return [Tag(item) for item in items]
 
     @strawberry.field
     def token(self, info: Info) -> str | None:

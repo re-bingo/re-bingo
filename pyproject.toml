@@ -25,6 +25,11 @@ httpx = {extras = ["http2"], version = "^0.23.3"}
 aerich = "^0.7.1"
 isort = "^5.11.4"
 
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "aerich>=0.7.1",
+]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -33,3 +38,32 @@ build-backend = "poetry.core.masonry.api"
 tortoise_orm = "src.db.SQL_CONFIG"
 location = "./migrations"
 src_folder = "."
+
+[project]
+authors = [
+    {name = "Muspi Merol", email = "admin@muspimerol.site"},
+]
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "fastapi<1.0.0,>=0.89.1",
+    "orjson<4.0.0,>=3.8.5",
+    "strawberry-graphql<1.0.0,>=0.154.0",
+    "tortoise-orm<1.0.0,>=0.19.2",
+    "uvicorn<1.0.0,>=0.20.0",
+    "aiomysql<1.0.0,>=0.1.1",
+    "loguru<1.0.0,>=0.6.0",
+    "pyyaml<7.0,>=6.0",
+    "watchfiles<1.0.0,>=0.18.1",
+    "passlib[bcrypt]<2.0.0,>=1.7.4",
+    "python-multipart<1.0.0,>=0.0.5",
+    "httpx[http2]<1.0.0,>=0.23.3",
+]
+version = "0.1.0"
+description = ""
+readme = "README.md"
+
+[project.urls]
+
+[project.group.dev.dependencies]
+aerich = "^0.7.1"
+isort = "^5.11.4"

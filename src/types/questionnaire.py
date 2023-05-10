@@ -1,5 +1,3 @@
-# TODO: implement questions and choices, logic and paging, posting and attending
-
 from contextlib import suppress
 
 import strawberry
@@ -7,7 +5,7 @@ from strawberry.types import Info
 from tortoise import exceptions
 
 from src.common.patch import auto_get_item_fields
-from src.models import QuestionItem, QuestionnaireItem
+from src.models import QuestionItem, QuestionnaireItem, QuestionnaireType
 from src.types.question import Question
 from src.types.user import Token, User
 
@@ -19,6 +17,14 @@ class Questionnaire:
     creator: User
     title: str
     description: str
+    start_date: str | None
+    end_date: str | None
+    school: str | None
+    type: strawberry.enum(QuestionnaireType) | None
+    location: str | None
+    reward: str | None
+    group_chat_qr_code_url: str | None
+    poster_url: str | None
 
     @strawberry.field
     async def questions(self) -> list[Question]:
@@ -32,7 +38,23 @@ async def get_questionnaire(questionnaire_id: int) -> Questionnaire | None:
         return Questionnaire(item)
 
 
-async def add_questionnaire(title: str, description: str, info: Info) -> Questionnaire:
+async def add_questionnaire(
+        title: str | None, description: str | None, start_date: str | None, end_date: str | None, school: str | None,
+        type: QuestionnaireType | None, location: str | None, reward: str | None, group_chat_qr_code_url: str | None,
+        poster_url: str | None, info: Info
+) -> Questionnaire:
     token: Token = info.context["token"]
-    item = await QuestionnaireItem.create(creator_id=token.id, title=title, description=description)
+    item = await QuestionnaireItem.create(
+        creator_id=token.id,
+        title=title,
+        description=description,
+        start_date=start_date,
+        end_date=end_date,
+        school=school,
+        type=type,
+        location=location,
+        reward=reward,
+        group_chat_qr_code_url=group_chat_qr_code_url,
+        poster_url=poster_url,
+    )
     return Questionnaire(item)

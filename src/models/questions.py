@@ -12,7 +12,7 @@ class QuestionItem(Model):
     questionnaire = fields.ForeignKeyField("models.QuestionnaireItem")
     title: str = fields.CharField(max_length=31)
     prompt: str = fields.TextField()
-    type: str = fields.IntEnumField(QuestionType)
+    type: int = fields.IntEnumField(QuestionType)
 
     class Meta:
         table = "questions"

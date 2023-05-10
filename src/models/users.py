@@ -14,6 +14,7 @@ class UserItem(Model):
     registered_at: datetime = fields.DatetimeField(auto_now_add=True)
     last_modified: datetime = fields.DatetimeField(auto_now=True)
     last_login_at: datetime = fields.DatetimeField(auto_now_add=True)
+    tags: list[str] = fields.ManyToManyField("models.TagItem")
 
     class Meta:
         table = "users"
