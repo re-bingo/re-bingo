@@ -12,8 +12,7 @@ class Query:
 
     @strawberry.field
     async def greet(self, info: Info) -> str:
-        token = info.context["token"]
-        if token:
+        if token := info.context["token"]:
             return f"Hello, User({token.id})!"
         else:
             return "Hello, who are you?"
