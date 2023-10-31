@@ -61,8 +61,7 @@ async def retry_when_lose_sql_connection(request, call_next):
     try:
         return await call_next(request)
     except OperationalError as err:
-        if "Lost connection to MySQL server during query" in str(err.args):
-            logger.error(err)
-            return await call_next(request)
-        else:
+        if "Lost connection to MySQL server during query" not in str(err.args):
             raise err
+        logger.error(err)
+        return await call_next(request)
